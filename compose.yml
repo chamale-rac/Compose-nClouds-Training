@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: cases123
+      MYSQL_DATABASE: case_studies
+      MYSQL_USER: nclouds_user
+      MYSQL_PASSWORD: nclouds_password
+    volumes:
+      - ./database:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  webapp:
+    build: ./webapp
+    volumes:
+      - ./webapp:/app
+    ports:
+      - "80:80"
+    depends_on:
+      - database
+    environment:
+      FLASK_ENV: development
+      DATABASE_HOST: database
+      DATABASE_USER: root
+      DATABASE_PASSWORD: cases123
+      DATABASE_NAME: case_studies
+    networks:
+      - app-network
+
+networks:
+  app-network:
